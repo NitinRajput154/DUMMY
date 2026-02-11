@@ -1,0 +1,6 @@
+/* Global styles can be added here */
+body {
+  margin: 0;
+  padding: 0;
+  /* Font family is handled by MUI theme */
+}

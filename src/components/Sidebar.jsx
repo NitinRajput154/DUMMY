@@ -39,9 +39,11 @@ const menuItems = [
         label: 'Users',
         icon: Users,
         subItems: [
-            { label: 'All Users', path: '/users/all' },
-            { label: 'Active Users', path: '/users/active' },
-            { label: 'Inactive Users', path: '/users/inactive' }
+            { label: 'Customers', path: '/users/customers' },
+            { label: 'Sellers', path: '/users/sellers' },
+            { label: 'TSM', path: '/users/tsm' },
+            { label: 'Super Distributor', path: '/users/superdistributor' },
+            { label: 'CNF', path: '/users/cnf' },
         ]
     },
     {
@@ -49,8 +51,9 @@ const menuItems = [
         label: 'Content',
         icon: FileText,
         subItems: [
-            { label: 'Posts', path: '/content/posts' },
-            { label: 'Pages', path: '/content/pages' }
+            { label: 'Banners', path: '/content/banners' },
+            { label: 'Playlist', path: '/content/playlist' },
+            { label: 'App Listings', path: '/content/app-listings' }
         ]
     },
     {
@@ -58,8 +61,8 @@ const menuItems = [
         label: 'Coupons',
         icon: Ticket,
         subItems: [
-            { label: 'All Coupons', path: '/coupons/all' },
-            { label: 'Create Coupon', path: '/coupons/create' }
+            { label: 'Coupon Catalogs', path: '/coupons/catalogs' },
+            { label: 'Coupon Allocation', path: '/coupons/allocation' }
         ]
     },
     {
@@ -111,13 +114,13 @@ const Sidebar = () => {
     };
 
     return (
-        <aside className="w-[220px] bg-white border-r border-secondary-100 h-screen sticky top-0 flex flex-col overflow-y-auto scrollbar-hide">
+        <aside className="w-[220px] bg-white dark:bg-secondary-900 border-r border-secondary-100 dark:border-secondary-800 h-screen sticky top-0 flex flex-col overflow-y-auto scrollbar-hide transition-colors">
             {/* Logo Section */}
-            <div className="p-6 border-b border-secondary-100">
+            <div className="p-6 border-b border-secondary-100 dark:border-secondary-800">
                 <div className="flex items-center gap-2">
                     <img src={logo} alt="Logo" className="w-16 h-16" />
                     <div>
-                        <h1 className="text-sm font-bold text-secondary-600">Suraksha EMI</h1>
+                        <h1 className="text-sm font-bold text-secondary-600 dark:text-secondary-300">Suraksha EMI</h1>
                         <p className="text-xs text-secondary-400">Locker</p>
                     </div>
                 </div>
@@ -139,14 +142,14 @@ const Sidebar = () => {
                                     className={({ isActive }) =>
                                         `flex items-center justify-between px-6 py-3 text-sm font-medium transition-all group ${isActive
                                             ? 'bg-primary text-white'
-                                            : 'text-secondary-700 hover:bg-secondary-50'
+                                            : 'text-secondary-700 dark:text-secondary-300 hover:bg-secondary-50 dark:hover:bg-secondary-800'
                                         }`
                                     }
                                 >
                                     {({ isActive }) => (
                                         <>
                                             <div className="flex items-center gap-3">
-                                                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-secondary-600 group-hover:text-secondary-900'}`} />
+                                                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-secondary-600 dark:text-secondary-400 group-hover:text-secondary-900 dark:group-hover:text-secondary-100'}`} />
                                                 <span>{item.label}</span>
                                             </div>
                                         </>
@@ -156,10 +159,10 @@ const Sidebar = () => {
                                 <>
                                     <button
                                         onClick={() => toggleExpand(item.id)}
-                                        className="w-full flex items-center justify-between px-6 py-3 text-sm font-medium text-secondary-700 hover:bg-secondary-50 transition-colors group"
+                                        className="w-full flex items-center justify-between px-6 py-3 text-sm font-medium text-secondary-700 dark:text-secondary-300 hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors group"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <Icon className="w-5 h-5 text-secondary-600 group-hover:text-secondary-900" />
+                                            <Icon className="w-5 h-5 text-secondary-600 dark:text-secondary-400 group-hover:text-secondary-900 dark:group-hover:text-secondary-100" />
                                             <span>{item.label}</span>
                                         </div>
                                         {hasSubItems && (
@@ -173,15 +176,15 @@ const Sidebar = () => {
 
                                     {/* Sub Menu Items */}
                                     {hasSubItems && isExpanded && (
-                                        <div className="bg-secondary-50/50">
+                                        <div className="bg-secondary-50/50 dark:bg-secondary-800/50">
                                             {item.subItems.map((subItem, index) => (
                                                 <NavLink
                                                     key={index}
                                                     to={subItem.path}
                                                     className={({ isActive }) =>
                                                         `block px-6 pl-14 py-2.5 text-sm transition-colors ${isActive
-                                                            ? 'text-primary font-medium bg-primary/5'
-                                                            : 'text-secondary-600 hover:text-secondary-900 hover:bg-white'
+                                                            ? 'text-primary font-medium bg-primary/5 dark:bg-primary/10'
+                                                            : 'text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 hover:bg-white dark:hover:bg-secondary-800'
                                                         }`
                                                     }
                                                 >

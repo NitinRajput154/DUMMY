@@ -8,12 +8,16 @@
   * {
     @apply box-border;
   }
-  
+
   body {
-    @apply m-0 font-sans antialiased;
+    @apply m-0 font-sans antialiased bg-secondary-50 text-secondary-900 transition-colors duration-300;
     font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
   }
-  
+
+  .dark body {
+    @apply bg-secondary-950 text-secondary-100;
+  }
+
   #root {
     @apply min-h-screen;
   }
@@ -23,7 +27,7 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;

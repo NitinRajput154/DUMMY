@@ -18,12 +18,12 @@ import WeeklyDeviceSetupChart from '../../components/charts/WeeklyDeviceSetupCha
 // Role Card Component
 const RoleCard = ({ title, count, trend, trendUp }) => {
     return (
-        <div className="bg-white p-6 rounded-2xl border border-secondary-100 min-h-[140px] flex flex-col justify-between transition-all hover:shadow-card">
-            <p className="text-sm font-medium text-secondary-700 mb-2">{title}</p>
+        <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 min-h-[140px] flex flex-col justify-between transition-all hover:shadow-card">
+            <p className="text-sm font-medium text-secondary-700 dark:text-secondary-400 mb-2">{title}</p>
 
             <div className="flex justify-between items-end">
                 <div className="flex items-baseline gap-2">
-                    <h3 className="text-5xl font-bold text-secondary-900 leading-none">
+                    <h3 className="text-5xl font-bold text-secondary-900 dark:text-secondary-100 leading-none">
                         {count}
                     </h3>
                     <span className="text-xs text-secondary-400 font-medium">Total</span>
@@ -45,18 +45,18 @@ const RoleCard = ({ title, count, trend, trendUp }) => {
 // Stat Block Component with Background Icon
 const StatBlock = ({ label, count, subLabel, icon: Icon, color }) => {
     return (
-        <div className="relative bg-secondary-50 rounded-2xl p-4 min-h-[110px] flex flex-col justify-center overflow-hidden">
+        <div className="relative bg-secondary-50 dark:bg-secondary-800 rounded-2xl p-4 min-h-[110px] flex flex-col justify-center overflow-hidden transition-colors">
             <p className={`text-xs font-bold ${color} mb-3 uppercase tracking-wide z-10 relative`}>
                 {label}
             </p>
             <div className="flex items-baseline gap-1 z-10 relative">
-                <h4 className="text-3xl font-semibold text-secondary-900">{count}</h4>
-                <span className="text-xs text-secondary-600">{subLabel}</span>
+                <h4 className="text-3xl font-semibold text-secondary-900 dark:text-secondary-100">{count}</h4>
+                <span className="text-xs text-secondary-600 dark:text-secondary-400">{subLabel}</span>
             </div>
 
             {/* Watermark Icon */}
-            <div className="absolute -right-4 -bottom-4 opacity-[0.08] pointer-events-none">
-                <Icon className="w-24 h-24 text-black" strokeWidth={1.5} />
+            <div className="absolute -right-4 -bottom-4 opacity-[0.08] dark:opacity-[0.05] pointer-events-none">
+                <Icon className="w-24 h-24 text-black dark:text-white" strokeWidth={1.5} />
             </div>
         </div>
     );
@@ -66,7 +66,7 @@ const StatBlock = ({ label, count, subLabel, icon: Icon, color }) => {
 const DualStatRow = ({ title, proCount, proSub, plusCount, plusSub, icon }) => {
     return (
         <div className="mb-6">
-            <h3 className="text-base font-semibold text-secondary-900 mb-3">{title}</h3>
+            <h3 className="text-base font-semibold text-secondary-900 dark:text-secondary-100 mb-3">{title}</h3>
             <div className="grid grid-cols-2 gap-4">
                 <StatBlock
                     label="Pro"
@@ -91,14 +91,14 @@ const DualStatRow = ({ title, proCount, proSub, plusCount, plusSub, icon }) => {
 const SectionHeader = ({ title, showSelect = true, selectValue = "30", onSelectChange }) => {
     return (
         <div className="flex justify-between items-center mb-6">
-            <h2 className="text-base font-bold text-secondary-900">{title}</h2>
+            <h2 className="text-base font-bold text-secondary-900 dark:text-secondary-100">{title}</h2>
 
             {showSelect && (
                 <div className="relative">
                     <select
                         value={selectValue}
                         onChange={onSelectChange}
-                        className="appearance-none bg-white border border-secondary-200 rounded-lg px-4 py-2 pr-8 text-sm text-secondary-800 font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer hover:border-secondary-300 transition-colors"
+                        className="appearance-none bg-white dark:bg-secondary-800 border border-secondary-200 dark:border-secondary-700 rounded-lg px-4 py-2 pr-8 text-sm text-secondary-800 dark:text-secondary-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer hover:border-secondary-300 dark:hover:border-secondary-600 transition-colors"
                     >
                         <option value="30">Last 30 days</option>
                         <option value="7">Last 7 days</option>
@@ -115,17 +115,17 @@ const SectionHeader = ({ title, showSelect = true, selectValue = "30", onSelectC
 const DateRangePicker = () => {
     return (
         <div className="flex gap-2 items-center">
-            <div className="flex items-center bg-white border border-secondary-200 rounded-lg px-4 py-2 shadow-sm">
+            <div className="flex items-center bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg px-4 py-2 shadow-sm transition-colors">
                 <Calendar className="w-4 h-4 text-secondary-500 mr-2" />
-                <span className="text-sm font-medium text-secondary-800">
+                <span className="text-sm font-medium text-secondary-800 dark:text-secondary-200">
                     23 May 2025 - 30 May 2025
                 </span>
             </div>
-            <button className="bg-white border border-secondary-200 rounded-lg p-2 w-9 h-9 flex items-center justify-center hover:bg-secondary-50 transition-colors">
-                <RefreshCw className="w-4 h-4 text-secondary-600" />
+            <button className="bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg p-2 w-9 h-9 flex items-center justify-center hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors">
+                <RefreshCw className="w-4 h-4 text-secondary-600 dark:text-secondary-400" />
             </button>
-            <button className="bg-white border border-secondary-200 rounded-lg p-2 w-9 h-9 flex items-center justify-center hover:bg-secondary-50 transition-colors">
-                <Calendar className="w-4 h-4 text-secondary-600" />
+            <button className="bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg p-2 w-9 h-9 flex items-center justify-center hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors">
+                <Calendar className="w-4 h-4 text-secondary-600 dark:text-secondary-400" />
             </button>
         </div>
     );
@@ -151,7 +151,7 @@ const Dashboard = () => {
                 <div className="lg:col-span-7 flex flex-col gap-6">
 
                     {/* Role Overview */}
-                    <div className="bg-white p-6 rounded-2xl border border-secondary-100">
+                    <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 transition-colors">
                         <SectionHeader
                             title="Role Overview"
                             selectValue={roleFilter}
@@ -166,7 +166,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Today's Activity */}
-                    <div className="bg-white p-6 rounded-2xl border border-secondary-100 flex-1">
+                    <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 flex-1 transition-colors">
                         <SectionHeader
                             title="Today's Activity"
                             selectValue={activityFilter}
@@ -195,7 +195,7 @@ const Dashboard = () => {
 
                 {/* RIGHT COLUMN - Business Overview */}
                 <div className="lg:col-span-5">
-                    <div className="bg-white p-6 rounded-2xl border border-secondary-100 h-full">
+                    <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 h-full transition-colors">
                         <SectionHeader
                             title="Business Overview"
                             selectValue={businessFilter}
@@ -239,9 +239,9 @@ const Dashboard = () => {
                         />
 
                         <div className="flex justify-between items-center mt-4">
-                            <h3 className="text-sm font-semibold text-secondary-900">Secondary Key</h3>
-                            <button className="p-1 hover:bg-secondary-50 rounded transition-colors">
-                                <MoreVertical className="w-5 h-5 text-secondary-500" />
+                            <h3 className="text-sm font-semibold text-secondary-900 dark:text-secondary-100">Secondary Key</h3>
+                            <button className="p-1 hover:bg-secondary-50 dark:hover:bg-secondary-800 rounded transition-colors">
+                                <MoreVertical className="w-5 h-5 text-secondary-500 dark:text-secondary-400" />
                             </button>
                         </div>
                     </div>

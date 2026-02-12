@@ -1,79 +1,99 @@
-import { AppBar, Toolbar, Typography, IconButton, InputBase, Box, Avatar, Badge, Breadcrumbs, Link } from '@mui/material';
-import { Search, NotificationsOutlined, SettingsOutlined, DateRange } from '@mui/icons-material';
-import { useLocation } from 'react-router-dom';
-
-const drawerWidth = 240;
+import { useState } from 'react';
+import {
+    Search,
+    Bell,
+    MessageSquare,
+    Moon,
+    Sun,
+    Plus,
+    User
+} from 'lucide-react';
 
 const Header = () => {
-    const location = useLocation();
+    const [darkMode, setDarkMode] = useState(false);
+    const [searchFocus, setSearchFocus] = useState(false);
+
+    const toggleDarkMode = () => {
+        setDarkMode(!darkMode);
+        // Add dark mode logic here
+    };
 
     return (
-        <AppBar
-            position="fixed"
-            color="inherit" // Keep it light or transparent
-            sx={{
-                width: { sm: `calc(100% - ${drawerWidth}px)` },
-                ml: { sm: `${drawerWidth}px` },
-                boxShadow: 'none',
-                borderBottom: '1px solid #f0f0f0',
-                zIndex: (theme) => theme.zIndex.drawer + 1,
-                bgcolor: '#ffffff'
-            }}
-        >
-            <Toolbar sx={{ justifyContent: 'space-between', minHeight: 70 }}>
-                {/* Search Bar - moved to left as per screenshot */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#fff',
-                        border: '1px solid #e0e0e0',
-                        borderRadius: 1,
-                        px: 1.5,
-                        py: 0.5,
-                        width: { xs: '150px', sm: '300px' },
-                        height: 40
-                    }}
-                >
-                    <InputBase placeholder="Search" sx={{ width: '100%', fontSize: '0.9rem' }} />
-                    <Search sx={{ color: '#9e9e9e', fontSize: 20 }} />
-                </Box>
+        <header className="bg-white border-b border-secondary-100 sticky top-0 z-40">
+            <div className="flex items-center justify-between px-8 py-4">
+                {/* Search Bar */}
+                <div className="flex-1 max-w-xl">
+                    <div className={`relative transition-all ${searchFocus ? 'scale-[1.02]' : ''}`}>
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary-400" />
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            onFocus={() => setSearchFocus(true)}
+                            onBlur={() => setSearchFocus(false)}
+                            className="w-full pl-11 pr-4 py-2.5 bg-secondary-50 border border-secondary-100 rounded-lg text-sm text-secondary-900 placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 focus:bg-white transition-all"
+                        />
+                        {searchFocus && (
+                            <button className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-secondary-500 hover:text-secondary-700 font-medium">
+                                ESC
+                            </button>
+                        )}
+                    </div>
+                </div>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    {/* Theme Toggle Placeholder */}
-                    <Box sx={{ display: 'flex', border: '1px solid #e0e0e0', borderRadius: 1, p: 0.5, alignItems: 'center' }}>
-                        <Box sx={{ bgcolor: '#00C853', borderRadius: 0.5, width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <SettingsOutlined sx={{ color: '#fff', fontSize: 16 }} />
-                            {/* Actually using Sun icon in real app, but using Settings as placeholder for Light Mode based on available imports or close match */}
-                        </Box>
-                        <Box sx={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <NotificationsOutlined sx={{ color: '#9e9e9e', fontSize: 16, transform: 'rotate(180deg)' }} />
-                            {/* Moon placeholder */}
-                        </Box>
-                    </Box>
+                {/* Right Section - Actions */}
+                <div className="flex items-center gap-3 ml-6">
+                    {/* Add Button */}
+                    <button className="flex items-center gap-2 px-4 py-2 bg-success text-white rounded-lg text-sm font-medium hover:bg-success/90 transition-colors shadow-sm">
+                        <Plus className="w-4 h-4" />
+                        <span className="hidden sm:inline">Add New</span>
+                    </button>
 
-                    {/* Notification Icon */}
-                    <IconButton size="small" sx={{ border: '1px solid #e0e0e0', borderRadius: 1, width: 36, height: 36 }}>
-                        <Badge badgeContent={4} color="error" sx={{ '& .MuiBadge-badge': { fontSize: 9, height: 14, minWidth: 14 } }}>
-                            <NotificationsOutlined sx={{ fontSize: 20, color: '#424242' }} />
-                        </Badge>
-                    </IconButton>
+                    {/* Dark Mode Toggle */}
+                    <button
+                        onClick={toggleDarkMode}
+                        className="p-2 rounded-lg hover:bg-secondary-50 transition-colors relative group"
+                        title={darkMode ? 'Light Mode' : 'Dark Mode'}
+                    >
+                        {darkMode ? (
+                            <Sun className="w-5 h-5 text-secondary-600" />
+                        ) : (
+                            <Moon className="w-5 h-5 text-secondary-600" />
+                        )}
+                    </button>
 
-                    {/* Messages Icon (using Settings as placeholder or DateRange if specific icon not imported yet) */}
-                    <IconButton size="small" sx={{ border: '1px solid #e0e0e0', borderRadius: 1, width: 36, height: 36 }}>
-                        <Badge badgeContent={10} color="error" sx={{ '& .MuiBadge-badge': { fontSize: 9, height: 14, minWidth: 14 } }}>
-                            <NotificationsOutlined sx={{ fontSize: 20, color: '#424242' }} />
-                            {/* Should be ChatBubbleOutline but using what is available or adding import */}
-                        </Badge>
-                    </IconButton>
+                    {/* Notifications */}
+                    <button className="p-2 rounded-lg hover:bg-secondary-50 transition-colors relative group">
+                        <Bell className="w-5 h-5 text-secondary-600" />
+                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full border-2 border-white"></span>
+                        <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                            3
+                        </span>
+                    </button>
 
-                    {/* Profile Avatar */}
-                    <Avatar alt="Admin User" src="/static/images/avatar/1.jpg" sx={{ width: 36, height: 36, bgcolor: '#fce4ec', borderRadius: 1 }}>
-                        <img src="https://mui.com/static/images/avatar/2.jpg" alt="User" style={{ width: '100%', height: '100%' }} />
-                    </Avatar>
-                </Box>
-            </Toolbar>
-        </AppBar>
+                    {/* Messages */}
+                    <button className="p-2 rounded-lg hover:bg-secondary-50 transition-colors relative group">
+                        <MessageSquare className="w-5 h-5 text-secondary-600" />
+                        <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                            5
+                        </span>
+                    </button>
+
+                    {/* Divider */}
+                    <div className="w-px h-6 bg-secondary-200"></div>
+
+                    {/* User Profile */}
+                    <button className="flex items-center gap-3 pl-3 pr-4 py-2 rounded-lg hover:bg-secondary-50 transition-colors group">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+                            <User className="w-5 h-5" />
+                        </div>
+                        <div className="hidden lg:block text-left">
+                            <p className="text-sm font-semibold text-secondary-900">Admin User</p>
+                            <p className="text-xs text-secondary-500">Administrator</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
     );
 };
 

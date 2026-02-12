@@ -1,24 +1,23 @@
-import { Box, Typography } from '@mui/material';
+import { Construction } from 'lucide-react';
 
 const ComingSoon = () => {
     return (
-        <Box
-            sx={{
-                height: '80vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center'
-            }}
-        >
-            <Typography variant="h1" sx={{ fontSize: '3rem', fontWeight: 800, mb: 2 }}>
-                Coming Soon 🚀
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-                This page is under construction.
-            </Typography>
-        </Box>
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="text-center">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-primary to-blue-deep rounded-full mb-6">
+                    <Construction className="w-10 h-10 text-white" />
+                </div>
+                <h1 className="text-4xl font-bold text-secondary-900 mb-3">Coming Soon</h1>
+                <p className="text-lg text-secondary-500 mb-8 max-w-md mx-auto">
+                    This feature is currently under development. Check back soon for updates!
+                </p>
+                <div className="flex gap-3 justify-center">
+                    <div className="w-3 h-3 bg-blue-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-3 h-3 bg-blue-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-3 h-3 bg-blue-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
+            </div>
+        </div>
     );
 };
 

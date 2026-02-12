@@ -1,30 +1,24 @@
-import { Box, CssBaseline, Toolbar } from '@mui/material';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { Outlet } from 'react-router-dom';
-
-const drawerWidth = 240;
 
 const Layout = () => {
     return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <Header />
+        <div className="flex min-h-screen bg-secondary-50">
+            {/* Sidebar */}
             <Sidebar />
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    p: 3,
-                    width: { sm: `calc(100% - ${drawerWidth}px)` },
-                    minHeight: '100vh',
-                    bgcolor: 'background.default',
-                }}
-            >
-                <Toolbar /> {/* Placeholder for AppBar height */}
-                <Outlet />
-            </Box>
-        </Box>
+
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col">
+                {/* Header */}
+                <Header />
+
+                {/* Page Content */}
+                <main className="flex-1 p-8 overflow-auto">
+                    <Outlet />
+                </main>
+            </div>
+        </div>
     );
 };
 

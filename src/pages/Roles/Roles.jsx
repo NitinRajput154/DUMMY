@@ -25,23 +25,14 @@ const roleData = [
 ];
 
 const RoleHeader = () => (
-    <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-extrabold text-primary">Roles</h1>
-        <div className="flex gap-2 items-center">
-            <div className="flex items-center bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg px-4 py-2 shadow-sm transition-colors">
-                <Calendar className="w-4 h-4 text-secondary-500 mr-2" />
-                <span className="text-sm font-medium text-secondary-800 dark:text-secondary-200">
-                    23 May 2025 - 30 May 2025
-                </span>
-            </div>
-            <button className="bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg p-2 hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors shadow-sm">
-                <Filter className="w-4 h-4 text-secondary-600 dark:text-secondary-400" />
+    <div className="flex justify-between items-center mb-8 px-8 pt-8">
+        <h1 className="text-2xl font-bold text-[#4D35F9]">Roles</h1>
+        <div className="flex gap-3 items-center">
+            <button className="bg-[#4D35F9] text-white px-8 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-opacity-90 transition-all">
+                Add
             </button>
-            <button className="bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg p-2 hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors shadow-sm">
-                <RefreshCw className="w-4 h-4 text-secondary-600 dark:text-secondary-400" />
-            </button>
-            <button className="bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg p-2 hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors shadow-sm">
-                <LayoutGrid className="w-4 h-4 text-secondary-600 dark:text-secondary-400" />
+            <button className="bg-white border border-secondary-200 rounded-lg p-2 flex items-center justify-center shadow-sm hover:bg-secondary-50 transition-colors">
+                <RefreshCw className="w-4 h-4 text-secondary-600" />
             </button>
         </div>
     </div>
@@ -62,53 +53,47 @@ const RoleTable = ({ data }) => {
     };
 
     return (
-        <div className="bg-white dark:bg-secondary-900 rounded-2xl border border-secondary-100 dark:border-secondary-800 overflow-hidden shadow-sm transition-colors">
-            <div className="p-4 border-b border-secondary-100 dark:border-secondary-800 flex justify-between items-center bg-white dark:bg-secondary-900">
-                <h2 className="text-base font-bold text-secondary-900 dark:text-secondary-100">Add Roles</h2>
-                <div className="flex items-center gap-2">
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-secondary-700 dark:text-secondary-300 hover:text-secondary-900 dark:hover:text-secondary-100 font-medium text-sm transition-colors">
-                        Add
-                    </button>
-                    <button className="bg-white dark:bg-secondary-900 border border-secondary-100 dark:border-secondary-800 rounded-lg p-1.5 hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors shadow-sm">
-                        <Plus className="w-4 h-4 text-secondary-500" strokeWidth={3} />
-                    </button>
-                </div>
+        <div className="bg-white dark:bg-secondary-900 rounded-3xl border border-secondary-100 dark:border-secondary-800 overflow-hidden shadow-sm transition-colors mx-8 mb-8">
+            <div className="bg-[#A594F9] px-8 py-5 flex justify-between items-center">
+                <h2 className="text-base font-bold text-[#4D35F9]">Add Roles</h2>
             </div>
 
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                     <thead>
-                        <tr className="bg-white dark:bg-secondary-900 border-b border-secondary-100 dark:border-secondary-800">
-                            <th className="px-6 py-4 text-left text-sm font-bold text-secondary-900 dark:text-secondary-100 border-r border-secondary-50 dark:border-secondary-800">Role</th>
-                            <th className="px-6 py-4 text-left text-sm font-bold text-secondary-900 dark:text-secondary-100 border-r border-secondary-50 dark:border-secondary-800">Status</th>
-                            <th className="px-6 py-4 text-left text-sm font-bold text-secondary-900 dark:text-secondary-100 border-r border-secondary-50 dark:border-secondary-800">Created On</th>
-                            <th className="px-6 py-4 text-left text-sm font-bold text-secondary-900 dark:text-secondary-100 border-r border-secondary-50 dark:border-secondary-800">Updated On</th>
-                            <th className="px-6 py-4 text-left text-sm font-bold text-secondary-900 dark:text-secondary-100">Action</th>
-                        </tr>
+                        <thead>
+                            <tr className="bg-white dark:bg-secondary-900 border-b border-secondary-200">
+                                <th className="px-8 py-4 text-left text-sm font-bold text-secondary-900 border-r border-secondary-100">Role</th>
+                                <th className="px-8 py-4 text-left text-sm font-bold text-secondary-900 border-r border-secondary-100">Status</th>
+                                <th className="px-8 py-4 text-left text-sm font-bold text-secondary-900 border-r border-secondary-100">Created On</th>
+                                <th className="px-8 py-4 text-left text-sm font-bold text-secondary-900 border-r border-secondary-100">Updated On</th>
+                                <th className="px-8 py-4 text-left text-sm font-bold text-secondary-900">Action</th>
+                            </tr>
+                        </thead>
                     </thead>
                     <tbody>
                         {currentData.map((item, index) => (
-                            <tr key={`${item.id}-${index}`} className={`hover:bg-secondary-50/50 dark:hover:bg-secondary-800/50 transition-colors border-b border-secondary-50 dark:border-secondary-800 last:border-b-0`}>
-                                <td className="px-6 py-4 text-sm text-secondary-800 dark:text-secondary-200 font-medium border-r border-secondary-50 dark:border-secondary-800">
+                            <tr key={`${item.id}-${index}`} className="hover:bg-secondary-50/30 transition-colors border-b border-secondary-100 last:border-b-0">
+                                <td className="px-8 py-4 text-sm text-secondary-800 font-medium border-r border-secondary-100">
                                     {item.role}
                                 </td>
-                                <td className="px-6 py-4 text-sm border-r border-secondary-50 dark:border-secondary-800">
-                                    <span className="text-success font-medium">
+                                <td className="px-8 py-4 text-sm border-r border-secondary-100">
+                                    <span className="text-[#00C853] font-bold">
                                         {item.status}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-secondary-500 dark:text-secondary-400 font-medium border-r border-secondary-50 dark:border-secondary-800">
+                                <td className="px-8 py-4 text-sm text-secondary-600 font-medium border-r border-secondary-100">
                                     {item.created}
                                 </td>
-                                <td className="px-6 py-4 text-sm text-secondary-500 dark:text-secondary-400 font-medium border-r border-secondary-50 dark:border-secondary-800">
+                                <td className="px-8 py-4 text-sm text-secondary-600 font-medium border-r border-secondary-100">
                                     {item.updated}
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-8 py-4">
                                     <div className="flex items-center gap-4">
-                                        <button className="text-secondary-400 dark:text-secondary-500 hover:text-secondary-700 dark:hover:text-secondary-300 transition-colors">
+                                        <button className="text-secondary-500 hover:text-secondary-800 transition-colors">
                                             <Edit2 className="w-5 h-5" />
                                         </button>
-                                        <button className="bg-cyan-50/50 dark:bg-cyan-900/20 hover:bg-cyan-100 dark:hover:bg-cyan-900/30 text-[#00E5FF] px-4 py-1.5 rounded-lg text-sm font-bold transition-all border border-cyan-100/50 dark:border-cyan-900/40 flex items-center justify-center min-w-[100px] shadow-sm">
+                                        <button className="bg-[#B3E5FC] hover:bg-opacity-80 text-[#0288D1] px-5 py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center min-w-[110px] shadow-sm">
                                             Permission
                                         </button>
                                     </div>
@@ -126,49 +111,45 @@ const RoleTable = ({ data }) => {
                 </table>
             </div>
 
-            <div className="p-4 border-t border-secondary-100 dark:border-secondary-800 flex justify-end items-center bg-white dark:bg-secondary-900 transition-colors">
-                <div className="flex items-center gap-1">
-                    <button
-                        onClick={() => handlePageChange(1)}
-                        disabled={currentPage === 1}
-                        className="p-2 text-secondary-400 dark:text-secondary-600 hover:text-secondary-900 dark:hover:text-secondary-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                        <ChevronsLeft className="w-5 h-5" />
-                    </button>
+            <div className="p-6 flex justify-end items-center bg-white border-t border-secondary-100">
+                <div className="flex items-center gap-3">
                     <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="p-2 text-secondary-400 dark:text-secondary-600 hover:text-secondary-900 dark:hover:text-secondary-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="p-1 text-secondary-800 disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                        <ChevronLeft className="w-5 h-5" />
+                        <ChevronLeft className="w-6 h-6" />
                     </button>
 
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                            key={page}
-                            onClick={() => handlePageChange(page)}
-                            className={`w-8 h-8 rounded text-sm font-bold flex items-center justify-center transition-all ${currentPage === page
-                                ? 'bg-primary text-white shadow-md'
-                                : 'text-secondary-500 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100'
-                                }`}
-                        >
-                            {page}
-                        </button>
-                    ))}
+                    <div className="flex items-center gap-4 mx-2">
+                        <span className="text-sm font-bold text-secondary-400">0</span>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={`w-10 h-10 rounded-full text-base font-bold flex items-center justify-center transition-all ${currentPage === page
+                                    ? 'bg-[#4D35F9] text-white shadow-lg'
+                                    : 'text-secondary-500 hover:text-[#4D35F9]'
+                                    }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+                    </div>
 
                     <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="p-2 text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="p-1 text-secondary-800 disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                        <ChevronRight className="w-5 h-5" />
+                        <ChevronRight className="w-6 h-6" />
                     </button>
                     <button
                         onClick={() => handlePageChange(totalPages)}
                         disabled={currentPage === totalPages}
-                        className="p-2 text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="p-1 text-secondary-800 disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                        <ChevronsRight className="w-5 h-5" />
+                        <ChevronsRight className="w-6 h-6" />
                     </button>
                 </div>
             </div>

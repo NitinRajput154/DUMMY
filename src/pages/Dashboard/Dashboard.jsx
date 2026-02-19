@@ -18,12 +18,12 @@ import WeeklyDeviceSetupChart from '../../components/charts/WeeklyDeviceSetupCha
 // Role Card Component
 const RoleCard = ({ title, count, trend, trendUp }) => {
     return (
-        <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 min-h-[140px] flex flex-col justify-between transition-all hover:shadow-card">
-            <p className="text-sm font-medium text-secondary-700 dark:text-secondary-400 mb-2">{title}</p>
+        <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 flex flex-col justify-between transition-all hover:shadow-sm">
+            <p className="text-sm font-semibold text-secondary-900 dark:text-secondary-100 mb-6">{title}</p>
 
-            <div className="flex justify-between items-end">
-                <div className="flex items-baseline gap-2">
-                    <h3 className="text-5xl font-bold text-secondary-900 dark:text-secondary-100 leading-none">
+            <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-4xl font-bold text-secondary-900 dark:text-secondary-100">
                         {count}
                     </h3>
                     <span className="text-xs text-secondary-400 font-medium">Total</span>
@@ -31,11 +31,11 @@ const RoleCard = ({ title, count, trend, trendUp }) => {
 
                 <div className={`flex items-center gap-1 ${trendUp ? 'text-success' : 'text-error'}`}>
                     {trendUp ? (
-                        <TrendingUp className="w-5 h-5" />
+                        <TrendingUp className="w-4 h-4" />
                     ) : (
-                        <TrendingDown className="w-5 h-5" />
+                        <TrendingDown className="w-4 h-4" />
                     )}
-                    <span className="text-sm font-bold">{trend}%</span>
+                    <span className="text-xs font-bold">{trend}%</span>
                 </div>
             </div>
         </div>
@@ -45,18 +45,18 @@ const RoleCard = ({ title, count, trend, trendUp }) => {
 // Stat Block Component with Background Icon
 const StatBlock = ({ label, count, subLabel, icon: Icon, color }) => {
     return (
-        <div className="relative bg-secondary-50 dark:bg-secondary-800 rounded-2xl p-4 min-h-[110px] flex flex-col justify-center overflow-hidden transition-colors">
-            <p className={`text-xs font-bold ${color} mb-3 uppercase tracking-wide z-10 relative`}>
+        <div className="relative bg-white dark:bg-secondary-800 rounded-xl p-6 flex flex-col justify-center border border-secondary-100 dark:border-secondary-700 transition-colors shadow-sm">
+            <p className={`text-sm font-bold ${color} mb-6`}>
                 {label}
             </p>
-            <div className="flex items-baseline gap-1 z-10 relative">
-                <h4 className="text-3xl font-semibold text-secondary-900 dark:text-secondary-100">{count}</h4>
-                <span className="text-xs text-secondary-600 dark:text-secondary-400">{subLabel}</span>
+            <div className="flex items-center gap-2 relative">
+                <h4 className="text-3xl font-bold text-secondary-900 dark:text-secondary-100">{count}</h4>
+                <span className="text-xs text-secondary-400 font-medium">{subLabel}</span>
             </div>
 
-            {/* Watermark Icon */}
-            <div className="absolute -right-4 -bottom-4 opacity-[0.08] dark:opacity-[0.05] pointer-events-none">
-                <Icon className="w-24 h-24 text-black dark:text-white" strokeWidth={1.5} />
+            {/* Watermark Icon - Simple Profile-like Icon as in screenshot */}
+            <div className="absolute right-4 bottom-4 opacity-10 pointer-events-none">
+                <Icon className="w-16 h-16 text-secondary-400" strokeWidth={1} />
             </div>
         </div>
     );
@@ -65,22 +65,22 @@ const StatBlock = ({ label, count, subLabel, icon: Icon, color }) => {
 // Dual Stat Row Component
 const DualStatRow = ({ title, proCount, proSub, plusCount, plusSub, icon }) => {
     return (
-        <div className="mb-6">
-            <h3 className="text-base font-semibold text-secondary-900 dark:text-secondary-100 mb-3">{title}</h3>
+        <div className="mb-8 last:mb-0 px-6">
+            <h3 className="text-sm font-bold text-secondary-900 dark:text-secondary-100 mb-4">{title}</h3>
             <div className="grid grid-cols-2 gap-4">
                 <StatBlock
                     label="Pro"
                     count={proCount}
                     subLabel={proSub}
                     icon={icon}
-                    color="text-blue-primary"
+                    color="text-[#4D35F9]"
                 />
                 <StatBlock
                     label="Plus"
                     count={plusCount}
                     subLabel={plusSub}
                     icon={icon}
-                    color="text-blue-deep"
+                    color="text-[#A594F9]"
                 />
             </div>
         </div>
@@ -90,21 +90,21 @@ const DualStatRow = ({ title, proCount, proSub, plusCount, plusSub, icon }) => {
 // Section Header Component
 const SectionHeader = ({ title, showSelect = true, selectValue = "30", onSelectChange }) => {
     return (
-        <div className="flex justify-between items-center mb-6">
-            <h2 className="text-base font-bold text-secondary-900 dark:text-secondary-100">{title}</h2>
+        <div className="bg-[#A594F9] px-6 py-4 flex justify-between items-center rounded-t-2xl">
+            <h2 className="text-base font-bold text-[#4D35F9]">{title}</h2>
 
             {showSelect && (
                 <div className="relative">
                     <select
                         value={selectValue}
                         onChange={onSelectChange}
-                        className="appearance-none bg-white dark:bg-secondary-800 border border-secondary-200 dark:border-secondary-700 rounded-lg px-4 py-2 pr-8 text-sm text-secondary-800 dark:text-secondary-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer hover:border-secondary-300 dark:hover:border-secondary-600 transition-colors"
+                        className="appearance-none bg-white/90 border-none rounded-full px-6 py-1.5 pr-10 text-xs text-secondary-800 font-bold focus:outline-none cursor-pointer transition-colors"
                     >
                         <option value="30">Last 30 days</option>
                         <option value="7">Last 7 days</option>
                         <option value="today">Today</option>
                     </select>
-                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary-500 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary-500 pointer-events-none" />
                 </div>
             )}
         </div>
@@ -115,17 +115,17 @@ const SectionHeader = ({ title, showSelect = true, selectValue = "30", onSelectC
 const DateRangePicker = () => {
     return (
         <div className="flex gap-2 items-center">
-            <div className="flex items-center bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg px-4 py-2 shadow-sm transition-colors">
+            <div className="flex items-center bg-white border border-secondary-200 rounded-lg px-4 py-1.5 shadow-sm">
                 <Calendar className="w-4 h-4 text-secondary-500 mr-2" />
-                <span className="text-sm font-medium text-secondary-800 dark:text-secondary-200">
+                <span className="text-xs font-bold text-secondary-800">
                     23 May 2025 - 30 May 2025
                 </span>
             </div>
-            <button className="bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg p-2 w-9 h-9 flex items-center justify-center hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors">
-                <RefreshCw className="w-4 h-4 text-secondary-600 dark:text-secondary-400" />
+            <button className="bg-white border border-secondary-200 rounded-lg px-4 py-1.5 text-xs font-bold text-secondary-800 shadow-sm hover:bg-secondary-50 transition-colors">
+                Export
             </button>
-            <button className="bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-800 rounded-lg p-2 w-9 h-9 flex items-center justify-center hover:bg-secondary-50 dark:hover:bg-secondary-800 transition-colors">
-                <Calendar className="w-4 h-4 text-secondary-600 dark:text-secondary-400" />
+            <button className="bg-white border border-secondary-200 rounded-lg p-2 flex items-center justify-center shadow-sm hover:bg-secondary-50 transition-colors">
+                <RefreshCw className="w-4 h-4 text-secondary-600" />
             </button>
         </div>
     );
@@ -139,25 +139,25 @@ const Dashboard = () => {
     const [businessFilter, setBusinessFilter] = useState("30");
 
     return (
-        <div className="flex-1 p-0 space-y-6">
+        <div className="flex-1 p-8 bg-secondary-50 dark:bg-secondary-950 space-y-8 min-h-screen">
             {/* Page Header */}
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-extrabold text-primary">Admin Overview</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-[#4D35F9]">Admin Overview</h1>
                 <DateRangePicker />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* LEFT COLUMN - Role Overview & Today's Activity */}
-                <div className="lg:col-span-7 flex flex-col gap-6">
+                <div className="lg:col-span-7 flex flex-col gap-8">
 
                     {/* Role Overview */}
-                    <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 transition-colors">
+                    <div className="bg-white dark:bg-secondary-900 rounded-2xl border border-secondary-100 dark:border-secondary-800 shadow-sm overflow-hidden pb-8">
                         <SectionHeader
                             title="Role Overview"
                             selectValue={roleFilter}
                             onSelectChange={(e) => setRoleFilter(e.target.value)}
                         />
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 p-6">
                             <RoleCard title="Super Distributor" count={75} trend={8} trendUp={true} />
                             <RoleCard title="Distributor" count={65} trend={8} trendUp={true} />
                             <RoleCard title="TSM" count={39} trend={8} trendUp={false} />
@@ -166,83 +166,80 @@ const Dashboard = () => {
                     </div>
 
                     {/* Today's Activity */}
-                    <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 flex-1 transition-colors">
+                    <div className="bg-white dark:bg-secondary-900 rounded-2xl border border-secondary-100 dark:border-secondary-800 shadow-sm overflow-hidden pb-8">
                         <SectionHeader
                             title="Today's Activity"
                             selectValue={activityFilter}
                             onSelectChange={(e) => setActivityFilter(e.target.value)}
                         />
 
-                        <DualStatRow
-                            title="New Users"
-                            proCount="26"
-                            proSub="New"
-                            plusCount="65"
-                            plusSub="New"
-                            icon={User}
-                        />
+                        <div className="mt-8">
+                            <DualStatRow
+                                title="New Users"
+                                proCount="26"
+                                proSub="New"
+                                plusCount="65"
+                                plusSub="New"
+                                icon={User}
+                            />
 
-                        <DualStatRow
-                            title="Pending Setup"
-                            proCount="26"
-                            proSub="Pending"
-                            plusCount="65"
-                            plusSub="Pending"
-                            icon={Smartphone}
-                        />
+                            <DualStatRow
+                                title="Pending Setup"
+                                proCount="26"
+                                proSub="Pending"
+                                plusCount="65"
+                                plusSub="Pending"
+                                icon={Smartphone}
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {/* RIGHT COLUMN - Business Overview */}
                 <div className="lg:col-span-5">
-                    <div className="bg-white dark:bg-secondary-900 p-6 rounded-2xl border border-secondary-100 dark:border-secondary-800 h-full transition-colors">
+                    <div className="bg-white dark:bg-secondary-900 rounded-2xl border border-secondary-100 dark:border-secondary-800 shadow-sm h-full overflow-hidden pb-8">
                         <SectionHeader
                             title="Business Overview"
                             selectValue={businessFilter}
                             onSelectChange={(e) => setBusinessFilter(e.target.value)}
                         />
 
-                        <DualStatRow
-                            title="Total Users"
-                            proCount="200"
-                            proSub="Total"
-                            plusCount="400"
-                            plusSub="Total"
-                            icon={User}
-                        />
+                        <div className="mt-8">
+                            <DualStatRow
+                                title="Total Users"
+                                proCount="200"
+                                proSub="Total"
+                                plusCount="400"
+                                plusSub="Total"
+                                icon={User}
+                            />
 
-                        <DualStatRow
-                            title="Locked Users"
-                            proCount="45"
-                            proSub="Locked"
-                            plusCount="16"
-                            plusSub="Locked"
-                            icon={Lock}
-                        />
+                            <DualStatRow
+                                title="Locked Users"
+                                proCount="45"
+                                proSub="Locked"
+                                plusCount="16"
+                                plusSub="Locked"
+                                icon={Lock}
+                            />
 
-                        <DualStatRow
-                            title="Unlocked Users"
-                            proCount="75"
-                            proSub="Unlocked"
-                            plusCount="01"
-                            plusSub="Unlocked"
-                            icon={Unlock}
-                        />
+                            <DualStatRow
+                                title="Unlocked Users"
+                                proCount="75"
+                                proSub="Unlocked"
+                                plusCount="01"
+                                plusSub="Unlocked"
+                                icon={Unlock}
+                            />
 
-                        <DualStatRow
-                            title="Removed User"
-                            proCount="26"
-                            proSub="Removed"
-                            plusCount="65"
-                            plusSub="Removed"
-                            icon={Trash2}
-                        />
-
-                        <div className="flex justify-between items-center mt-4">
-                            <h3 className="text-sm font-semibold text-secondary-900 dark:text-secondary-100">Secondary Key</h3>
-                            <button className="p-1 hover:bg-secondary-50 dark:hover:bg-secondary-800 rounded transition-colors">
-                                <MoreVertical className="w-5 h-5 text-secondary-500 dark:text-secondary-400" />
-                            </button>
+                            <DualStatRow
+                                title="Removed User"
+                                proCount="26"
+                                proSub="Removed"
+                                plusCount="65"
+                                plusSub="Removed"
+                                icon={Trash2}
+                            />
                         </div>
                     </div>
                 </div>

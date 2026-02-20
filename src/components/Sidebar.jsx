@@ -12,7 +12,7 @@ import {
     ChevronDown,
     ChevronRight
 } from 'lucide-react';
-import logo from '../assets/logo.png';
+import logo from '../assets/Logo.png';
 
 const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/', active: true },

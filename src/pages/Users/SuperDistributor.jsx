@@ -1,17 +1,21 @@
-import { useState, useMemo, useCallback } from "react";
-
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-const ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50];
-
-const TABLE_COLUMNS = [
-    "Business info",
-    "Login info",
-    "Number",
-    "Coupons count",
-    "Status",
-    "Action",
-];
+import {
+    Calendar,
+    RefreshCw,
+    Filter,
+    Search,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    Eye,
+    Plus,
+} from 'lucide-react';
+import { useState } from 'react';
+import AddSuperDistributorModal from './AddSuperDistributorModal';
+import AddDistributorModal from './AddDistributorModal';
+import AssignCouponModal from './AssignCouponModal';
+import CouponHistoryModal from './CouponHistoryModal';
 
 const INITIAL_DATA = [
     {
@@ -64,352 +68,326 @@ const INITIAL_DATA = [
     },
 ];
 
-// ─── Sub-components ──────────────────────────────────────────────────────────
-
-/** Inline SVG icons to avoid additional dependencies */
-const Icons = {
-    Search: () => (
-        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
-        </svg>
-    ),
-    Calendar: () => (
-        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-    ),
-    Filter: () => (
-        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
-        </svg>
-    ),
-    Refresh: () => (
-        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-    ),
-    Eye: () => (
-        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>
-    ),
-    ChevronDown: () => (
-        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-        </svg>
-    ),
-};
-
-/** Top action bar with title, Add, Export, and refresh */
-const PageHeader = () => (
-    <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-purple-600 tracking-tight">
-            Super Distributor
-        </h1>
-        <div className="flex items-center gap-3">
-            <button className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
-                Add
-            </button>
-            <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                Export
-            </button>
-            <button className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <Icons.Refresh />
-            </button>
-        </div>
-    </div>
-);
-
-/** Search + date range + filter row */
-const FiltersBar = ({ search, onSearchChange }) => (
-    <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between gap-4">
+const FilterDropdown = ({ label, placeholder }) => (
+    <div className="flex flex-col gap-1 min-w-[120px]">
+        <label className="text-xs font-semibold text-gray-700">{label}</label>
         <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2">
-                <Icons.Search />
-            </span>
-            <input
-                className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-purple-300"
-                placeholder="Search"
-                value={search}
-                onChange={(e) => onSearchChange(e.target.value)}
-            />
-        </div>
-        <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 bg-white">
-                <Icons.Calendar />
-                23 May 2025 - 30 May 2025
-            </div>
-            <button className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <Icons.Filter />
-            </button>
+            <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition-all cursor-pointer pr-8">
+                <option value="">{placeholder}</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
         </div>
     </div>
 );
 
-/** "Show entities" dropdown badge in the table header */
-const EntitiesSelector = ({ value, onChange }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const SuperDistributor = () => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [search, setSearch] = useState('');
+    const [isAdding, setIsAdding] = useState(false);
+    const [isAddDistributorModalOpen, setIsAddDistributorModalOpen] = useState(false);
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+    const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+    const [selectedSuperDist, setSelectedSuperDist] = useState(null);
+    const [selectedSuperDistForEdit, setSelectedSuperDistForEdit] = useState(null);
+
+    const filtered = INITIAL_DATA.filter(r =>
+        r.name.toLowerCase().includes(search.toLowerCase()) ||
+        r.id.toLowerCase().includes(search.toLowerCase()) ||
+        r.number.includes(search)
+    );
+
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentData = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
+
+    const openAddDistributor = (superDist) => {
+        setSelectedSuperDist(superDist);
+        setIsAddDistributorModalOpen(true);
+    };
+
+    const openAssignCoupon = (superDist) => {
+        setSelectedSuperDist(superDist);
+        setIsAssignModalOpen(true);
+    };
+
+    const openHistoryModal = (superDist) => {
+        setSelectedSuperDist(superDist);
+        setIsHistoryModalOpen(true);
+    };
+
+    const handleEditClick = (dist) => {
+        setSelectedSuperDistForEdit(dist);
+        setIsAdding(true);
+    };
+
+    const handleBack = () => {
+        setIsAdding(false);
+        setSelectedSuperDistForEdit(null);
+    };
 
     return (
-        <div className="relative">
-            <button
-                className="flex items-center gap-1 bg-purple-600 text-white text-sm font-semibold px-3 py-1.5 rounded-lg cursor-pointer select-none"
-                onClick={() => setIsOpen((prev) => !prev)}
-            >
-                {value}
-                <Icons.ChevronDown />
-            </button>
-            {isOpen && (
-                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-10 min-w-[60px]">
-                    {ITEMS_PER_PAGE_OPTIONS.map((opt) => (
+        <div className="min-h-screen bg-gray-50 p-6 space-y-4 font-sans text-left transition-all duration-300">
+            {/* Header */}
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-extrabold text-purple-600">Super Distributor</h1>
+                {!isAdding && (
+                    <div className="flex gap-2 items-center">
                         <button
-                            key={opt}
-                            className={`block w-full text-left px-3 py-1.5 text-sm hover:bg-purple-50 ${opt === value ? "font-bold text-purple-600" : "text-gray-700"
-                                }`}
-                            onClick={() => {
-                                onChange(opt);
-                                setIsOpen(false);
-                            }}
+                            onClick={() => { setSelectedSuperDistForEdit(null); setIsAdding(true); }}
+                            className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors shadow-sm active:scale-95 flex items-center gap-2"
                         >
-                            {opt}
+                            <Plus className="w-4 h-4" />
+                            Add
                         </button>
-                    ))}
+                        <div className="flex items-center bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-sm">
+                            <Calendar className="w-4 h-4 text-gray-400 mr-2" />
+                            <span className="text-sm font-medium text-gray-700">23 May 2025 - 30 May 2025</span>
+                        </div>
+                        <button className="bg-white border border-gray-200 rounded-lg p-2 hover:bg-gray-50 transition-colors shadow-sm">
+                            <Filter className="w-4 h-4 text-gray-500" />
+                        </button>
+                        <button className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+                            Export
+                        </button>
+                        <button className="bg-white border border-gray-200 rounded-lg p-2 hover:bg-gray-50 transition-colors shadow-sm">
+                            <RefreshCw className="w-4 h-4 text-gray-500" />
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {isAdding ? (
+                <AddSuperDistributorModal
+                    onBack={handleBack}
+                    initialData={selectedSuperDistForEdit}
+                />
+            ) : (
+                <div className="space-y-4 animate-in fade-in duration-500">
+                    {/* Filters Row */}
+                    <div className="flex flex-wrap items-end gap-4">
+                        <FilterDropdown label="Status" placeholder="Status" />
+                        <div className="flex-1 min-w-[200px] flex flex-col gap-1">
+                            <div className="h-[19px]" />
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search"
+                                    value={search}
+                                    onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
+                                    className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition-all shadow-sm placeholder-gray-400"
+                                />
+                                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Table Card */}
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        {/* Card Header */}
+                        <div className="bg-[#A594F9] px-5 py-4 flex justify-between items-center">
+                            <h2 className="text-base font-bold text-white">Super Distributor list</h2>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-white/80">Show entities</span>
+                                <div className="relative">
+                                    <select
+                                        value={itemsPerPage}
+                                        onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                                        className="appearance-none bg-white text-purple-600 border-0 rounded-lg px-3 py-1.5 pr-8 text-sm font-semibold focus:outline-none cursor-pointer"
+                                    >
+                                        <option value={10}>10</option>
+                                        <option value={20}>20</option>
+                                        <option value={50}>50</option>
+                                    </select>
+                                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-purple-600 pointer-events-none" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Table */}
+                        <div className="overflow-x-auto">
+                            <table className="w-full border-collapse">
+                                <thead>
+                                    <tr className="border-b border-gray-100 bg-gray-50/50">
+                                        {["Business info", "Login info", "Number", "Coupons count", "Status", "Action"].map((h, i) => (
+                                            <th key={i} className={`px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider ${i < 5 ? 'border-r border-gray-100' : ''} text-left`}>
+                                                {h}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentData.map((row, index) => (
+                                        <tr
+                                            key={`${row.id}-${index}`}
+                                            className="border-b border-gray-50 hover:bg-purple-50/20 transition-colors"
+                                        >
+                                            {/* Business info */}
+                                            <td className="p-4 border-r border-gray-50 align-top">
+                                                <div className="space-y-1">
+                                                    <InfoRow label="Sl no" value={row.id} />
+                                                    <InfoRow label="Name" value={row.name} />
+                                                    <InfoRow label="Address" value={row.address} />
+                                                </div>
+                                            </td>
+
+                                            {/* Login info */}
+                                            <td className="p-4 border-r border-gray-50 align-top">
+                                                <div className="space-y-1">
+                                                    <InfoRow label="Username" value={row.username} />
+                                                    <InfoRow label="Email" value={row.email} />
+                                                    <InfoRow label="Password" value={row.password} />
+                                                </div>
+                                            </td>
+
+                                            {/* Number */}
+                                            <td className="p-4 border-r border-gray-50 align-top">
+                                                <div className="text-sm font-medium text-gray-800">{row.number}</div>
+                                            </td>
+
+                                            {/* Coupons count */}
+                                            <td className="p-4 border-r border-gray-50 align-top">
+                                                <div className="space-y-1">
+                                                    <div className="text-sm font-bold text-gray-800">
+                                                        {row.couponsUsed} / {row.couponsTotal}
+                                                    </div>
+                                                    <button
+                                                        onClick={() => openHistoryModal(row)}
+                                                        className="text-gray-400 text-xs flex items-center gap-1 hover:text-purple-600 transition-colors font-bold"
+                                                    >
+                                                        <Eye className="w-3 h-3" />
+                                                        Show History
+                                                    </button>
+                                                </div>
+                                            </td>
+
+                                            {/* Status */}
+                                            <td className="p-4 border-r border-gray-50 align-top">
+                                                <span className={`inline-block text-xs font-bold px-2.5 py-1 rounded-full ${row.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
+                                                    {row.status}
+                                                </span>
+                                            </td>
+
+                                            {/* Actions */}
+                                            <td className="p-4 align-top">
+                                                <div className="flex flex-col gap-2 text-left">
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => handleEditClick(row)}
+                                                            className="text-xs font-bold px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button className="text-xs font-bold px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+                                                            Distributor
+                                                        </button>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => openAddDistributor(row)}
+                                                            className="text-xs font-bold px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+                                                        >
+                                                            Add Distributor
+                                                        </button>
+                                                        <button className="text-xs font-bold px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors whitespace-nowrap">
+                                                            Return to CNF
+                                                        </button>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => openAssignCoupon(row)}
+                                                        className="text-xs font-bold px-3 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors w-fit"
+                                                    >
+                                                        Assign Coupon
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Pagination */}
+                        <div className="px-5 py-3 flex justify-end items-center border-t border-gray-100">
+                            <div className="flex items-center gap-1">
+                                <PagBtn onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
+                                    <ChevronsLeft className="w-4 h-4" />
+                                </PagBtn>
+                                <PagBtn onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                                    <ChevronLeft className="w-4 h-4" />
+                                </PagBtn>
+
+                                <button className="w-8 h-8 rounded text-sm font-semibold text-gray-400 flex items-center justify-center">
+                                    0
+                                </button>
+
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                    <button
+                                        key={page}
+                                        onClick={() => handlePageChange(page)}
+                                        className={`w-8 h-8 rounded text-sm font-bold flex items-center justify-center transition-all ${currentPage === page
+                                            ? 'bg-purple-600 text-white shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                                            }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+
+                                <PagBtn onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                                    <ChevronRight className="w-4 h-4" />
+                                </PagBtn>
+                                <PagBtn onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>
+                                    <ChevronsRight className="w-4 h-4" />
+                                </PagBtn>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
+
+            <AddDistributorModal
+                isOpen={isAddDistributorModalOpen}
+                onClose={() => setIsAddDistributorModalOpen(false)}
+                superDistributorName={selectedSuperDist?.name}
+            />
+
+            <AssignCouponModal
+                isOpen={isAssignModalOpen}
+                onClose={() => setIsAssignModalOpen(false)}
+                distributorName={selectedSuperDist?.name}
+            />
+
+            <CouponHistoryModal
+                isOpen={isHistoryModalOpen}
+                onClose={() => setIsHistoryModalOpen(false)}
+                distributorName={selectedSuperDist?.name}
+            />
         </div>
     );
 };
 
-/** Action buttons for each table row */
-const RowActions = () => (
-    <div className="flex flex-col gap-1.5">
-        <div className="flex gap-1.5">
-            <button className="text-xs font-semibold px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
-                Edit
-            </button>
-            <button className="text-xs font-semibold px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
-                Distributor
-            </button>
-        </div>
-        <div className="flex gap-1.5">
-            <button className="text-xs font-semibold px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
-                Add Distributor
-            </button>
-            <button className="text-xs font-semibold px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">
-                Return to CNF
-            </button>
-        </div>
-        <button className="text-xs font-semibold px-3 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors w-fit">
-            Assign Coupon
-        </button>
-    </div>
+const InfoRow = ({ label, value, muted }) => (
+    <p className="text-xs text-left">
+        <span className="font-bold text-gray-800">{label} : </span>
+        <span className={`font-medium ${muted ? 'text-gray-400' : 'text-gray-600'}`}>{value}</span>
+    </p>
 );
 
-/** A single data row in the table */
-const TableRow = ({ row, isLast }) => (
-    <div
-        className={`grid grid-cols-[1.5fr_1.8fr_1.2fr_1.2fr_0.8fr_2fr] gap-4 px-6 py-5 items-start ${!isLast ? "border-b border-gray-100" : ""
-            } hover:bg-purple-50/30 transition-colors`}
+const PagBtn = ({ onClick, disabled, children }) => (
+    <button
+        onClick={onClick}
+        disabled={disabled}
+        className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
     >
-        {/* Business info */}
-        <div className="text-sm text-gray-700 space-y-0.5">
-            <div><span className="font-semibold text-gray-900">Sl no</span> : {row.id}</div>
-            <div><span className="font-semibold text-gray-900">Name</span> : {row.name}</div>
-            <div><span className="font-semibold text-gray-900">Address</span> : {row.address}</div>
-        </div>
-
-        {/* Login info */}
-        <div className="text-sm text-gray-700 space-y-0.5">
-            <div><span className="font-semibold text-gray-900">Username</span> : {row.username}</div>
-            <div><span className="font-semibold text-gray-900">Email</span> : {row.email}</div>
-            <div><span className="font-semibold text-gray-900">Password</span> : {row.password}</div>
-        </div>
-
-        {/* Number */}
-        <div className="text-sm text-gray-800 font-medium pt-0.5">{row.number}</div>
-
-        {/* Coupons count */}
-        <div className="text-sm pt-0.5">
-            <div className="font-semibold text-gray-800">
-                {row.couponsUsed} / {row.couponsTotal}
-            </div>
-            <button className="text-gray-400 text-xs flex items-center gap-1 mt-1 hover:text-purple-500 transition-colors">
-                <Icons.Eye />
-                Show History
-            </button>
-        </div>
-
-        {/* Status */}
-        <div className="pt-0.5">
-            <span
-                className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full ${row.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-600"
-                    }`}
-            >
-                {row.status}
-            </span>
-        </div>
-
-        {/* Actions */}
-        <RowActions />
-    </div>
+        {children}
+    </button>
 );
-
-/** Pagination controls */
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-    const pages = Array.from({ length: totalPages }, (_, i) => i);
-
-    return (
-        <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-center gap-2">
-            <button
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors text-xs"
-                onClick={() => onPageChange(0)}
-                disabled={currentPage === 0}
-            >
-                ««
-            </button>
-            <button
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"
-                onClick={() => onPageChange(Math.max(0, currentPage - 1))}
-                disabled={currentPage === 0}
-            >
-                ‹
-            </button>
-
-            {pages.map((page) => (
-                <button
-                    key={page}
-                    className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm transition-colors ${page === currentPage
-                            ? "bg-purple-600 text-white font-semibold shadow"
-                            : "text-gray-500 hover:bg-gray-100"
-                        }`}
-                    onClick={() => onPageChange(page)}
-                >
-                    {page}
-                </button>
-            ))}
-
-            <button
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"
-                onClick={() => onPageChange(Math.min(totalPages - 1, currentPage + 1))}
-                disabled={currentPage === totalPages - 1}
-            >
-                ›
-            </button>
-            <button
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors text-xs"
-                onClick={() => onPageChange(totalPages - 1)}
-                disabled={currentPage === totalPages - 1}
-            >
-                »»
-            </button>
-        </div>
-    );
-};
-
-// ─── Main Page Component ─────────────────────────────────────────────────────
-
-function SuperDistributor() {
-    const [search, setSearch] = useState("");
-    const [showEntities, setShowEntities] = useState(10);
-    const [currentPage, setCurrentPage] = useState(0);
-
-    /** Filter data by name or id based on search query */
-    const filteredData = useMemo(() => {
-        const query = search.toLowerCase();
-        return INITIAL_DATA.filter(
-            (d) =>
-                d.name.toLowerCase().includes(query) ||
-                d.id.toLowerCase().includes(query)
-        );
-    }, [search]);
-
-    /** Paginated subset of filtered data */
-    const paginatedData = useMemo(() => {
-        const start = currentPage * showEntities;
-        return filteredData.slice(start, start + showEntities);
-    }, [filteredData, currentPage, showEntities]);
-
-    const totalPages = Math.max(1, Math.ceil(filteredData.length / showEntities));
-
-    /** Reset to first page when entities-per-page changes */
-    const handleEntitiesChange = useCallback((value) => {
-        setShowEntities(value);
-        setCurrentPage(0);
-    }, []);
-
-    /** Reset to first page when search changes */
-    const handleSearchChange = useCallback((value) => {
-        setSearch(value);
-        setCurrentPage(0);
-    }, []);
-
-    return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            {/* Header */}
-            <PageHeader />
-
-            {/* Filters */}
-            <FiltersBar search={search} onSearchChange={handleSearchChange} />
-
-            {/* Table */}
-            <div className="p-6">
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    {/* Table title bar */}
-                    <div className="bg-purple-100 px-6 py-4 flex items-center justify-between">
-                        <h2 className="text-purple-700 font-bold text-base">
-                            Super Distributor list
-                        </h2>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600 font-medium">
-                                Show entities
-                            </span>
-                            <EntitiesSelector
-                                value={showEntities}
-                                onChange={handleEntitiesChange}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Column headers */}
-                    <div className="grid grid-cols-[1.5fr_1.8fr_1.2fr_1.2fr_0.8fr_2fr] gap-4 px-6 py-3 border-b border-gray-100 bg-gray-50">
-                        {TABLE_COLUMNS.map((header) => (
-                            <div
-                                key={header}
-                                className="text-xs font-bold text-gray-500 uppercase tracking-wider"
-                            >
-                                {header}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Data rows */}
-                    {paginatedData.length > 0 ? (
-                        paginatedData.map((row, idx) => (
-                            <TableRow
-                                key={`${row.id}-${idx}`}
-                                row={row}
-                                isLast={idx === paginatedData.length - 1}
-                            />
-                        ))
-                    ) : (
-                        <div className="px-6 py-12 text-center text-gray-400 text-sm">
-                            No results found.
-                        </div>
-                    )}
-
-                    {/* Pagination */}
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                    />
-                </div>
-            </div>
-        </div>
-    );
-}
 
 export default SuperDistributor;

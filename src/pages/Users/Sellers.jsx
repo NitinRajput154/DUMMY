@@ -1,8 +1,16 @@
-import { useState, useMemo, useCallback } from "react";
-
-const ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50];
-
-const TABLE_COLUMNS = ["Business name", "Login info", "Number", "Coupons", "Status", "Created date", "Action"];
+import {
+    Calendar,
+    RefreshCw,
+    Filter,
+    Search,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    Eye
+} from 'lucide-react';
+import { useState } from 'react';
 
 const INITIAL_DATA = [
     {
@@ -31,158 +39,254 @@ const INITIAL_DATA = [
     },
 ];
 
-const Icons = {
-    Search: () => (<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" /></svg>),
-    Calendar: () => (<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>),
-    Filter: () => (<svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" /></svg>),
-    Refresh: () => (<svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>),
-    Eye: () => (<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>),
-    ChevronDown: () => (<svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>),
-};
-
-const PageHeader = () => (
-    <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-purple-600 tracking-tight">Seller</h1>
-        <div className="flex items-center gap-3">
-            <button className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">Add</button>
-            <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">Export</button>
-            <button className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"><Icons.Refresh /></button>
-        </div>
-    </div>
-);
-
-const FiltersBar = ({ search, onSearchChange }) => (
-    <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between gap-4">
+const FilterDropdown = ({ label, placeholder }) => (
+    <div className="flex flex-col gap-1 min-w-[120px]">
+        <label className="text-xs font-semibold text-gray-700">{label}</label>
         <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2"><Icons.Search /></span>
-            <input className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-purple-300" placeholder="Search" value={search} onChange={(e) => onSearchChange(e.target.value)} />
-        </div>
-        <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 bg-white"><Icons.Calendar />23 May 2025 - 30 May 2025</div>
-            <button className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"><Icons.Filter /></button>
+            <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition-all cursor-pointer pr-8">
+                <option value="">{placeholder}</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
         </div>
     </div>
 );
 
-const EntitiesSelector = ({ value, onChange }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const Sellers = () => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [search, setSearch] = useState('');
+
+    const filtered = INITIAL_DATA.filter(r =>
+        r.name.toLowerCase().includes(search.toLowerCase()) ||
+        r.id.toLowerCase().includes(search.toLowerCase()) ||
+        r.number.includes(search)
+    );
+
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentData = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
+
     return (
-        <div className="relative">
-            <button className="flex items-center gap-1 bg-purple-600 text-white text-sm font-semibold px-3 py-1.5 rounded-lg cursor-pointer select-none" onClick={() => setIsOpen((p) => !p)}>{value}<Icons.ChevronDown /></button>
-            {isOpen && (
-                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-10 min-w-[60px]">
-                    {ITEMS_PER_PAGE_OPTIONS.map((opt) => (
-                        <button key={opt} className={`block w-full text-left px-3 py-1.5 text-sm hover:bg-purple-50 ${opt === value ? "font-bold text-purple-600" : "text-gray-700"}`} onClick={() => { onChange(opt); setIsOpen(false); }}>{opt}</button>
-                    ))}
+        <div className="min-h-screen bg-gray-50 p-6 space-y-4 font-sans">
+            {/* Header */}
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-extrabold text-purple-600">Seller</h1>
+                <div className="flex gap-2 items-center">
+                    <button className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors shadow-sm">
+                        Add
+                    </button>
+                    <div className="flex items-center bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-sm">
+                        <Calendar className="w-4 h-4 text-gray-400 mr-2" />
+                        <span className="text-sm font-medium text-gray-700">23 May 2025 - 30 May 2025</span>
+                    </div>
+                    <button className="bg-white border border-gray-200 rounded-lg p-2 hover:bg-gray-50 transition-colors shadow-sm">
+                        <Filter className="w-4 h-4 text-gray-500" />
+                    </button>
+                    <button className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+                        Export
+                    </button>
+                    <button className="bg-white border border-gray-200 rounded-lg p-2 hover:bg-gray-50 transition-colors shadow-sm">
+                        <RefreshCw className="w-4 h-4 text-gray-500" />
+                    </button>
                 </div>
-            )}
-        </div>
-    );
-};
+            </div>
 
-/** Seller-specific action buttons: Edit, Payment due, Return, Assign Coupon */
-const RowActions = () => (
-    <div className="flex flex-col gap-1.5">
-        <div className="flex gap-1.5">
-            <button className="text-xs font-semibold px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">Edit</button>
-            <button className="text-xs font-semibold px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">Payment Cleared</button>
-        </div>
-        <div className="flex gap-1.5">
-            <button className="text-xs font-semibold px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">Return</button>
-            <button className="text-xs font-semibold px-3 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors">Assign Coupon</button>
-        </div>
-    </div>
-);
+            {/* Filters Row */}
+            <div className="flex flex-wrap items-end gap-4">
+                <FilterDropdown label="Status" placeholder="Status" />
+                <div className="flex-1 min-w-[200px] flex flex-col gap-1">
+                    <div className="h-[19px]" />
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            value={search}
+                            onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition-all shadow-sm placeholder-gray-400"
+                        />
+                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
+                </div>
+            </div>
 
-const GRID_COLS = "grid-cols-[1.3fr_1.6fr_1fr_1.2fr_0.7fr_1fr_1.6fr]";
-
-/** Seller row — Coupons column shows Plus and Pro separately */
-const TableRow = ({ row, isLast }) => (
-    <div className={`grid ${GRID_COLS} gap-4 px-6 py-5 items-start ${!isLast ? "border-b border-gray-100" : ""} hover:bg-purple-50/30 transition-colors`}>
-        <div className="text-sm text-gray-700 space-y-0.5">
-            <div><span className="font-semibold text-gray-900">Sl no</span> : {row.id}</div>
-            <div><span className="font-semibold text-gray-900">Name</span> : {row.name}</div>
-            <div><span className="font-semibold text-gray-900">Address</span> : {row.address}</div>
-        </div>
-        <div className="text-sm text-gray-700 space-y-0.5">
-            <div><span className="font-semibold text-gray-900">Username</span> : {row.username}</div>
-            <div><span className="font-semibold text-gray-900">Email</span> : {row.email}</div>
-            <div><span className="font-semibold text-gray-900">Password</span> : {row.password}</div>
-        </div>
-        <div className="text-sm text-gray-800 font-medium pt-0.5">{row.number}</div>
-        {/* Coupons — Plus / Pro format */}
-        <div className="text-sm pt-0.5">
-            <div className="font-semibold text-gray-800">Plus : {row.plusUsed} / {row.plusTotal}</div>
-            <div className="font-semibold text-gray-800">Pro : {row.proUsed} / {row.proTotal}</div>
-            <button className="text-gray-400 text-xs flex items-center gap-1 mt-1 hover:text-purple-500 transition-colors"><Icons.Eye />Show History</button>
-        </div>
-        <div className="pt-0.5">
-            <span className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full ${row.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>{row.status}</span>
-        </div>
-        <div className="text-sm text-gray-700 pt-0.5">
-            <div className="font-medium">{row.createdDate}</div>
-            <div className="text-gray-400 text-xs">{row.createdTime}</div>
-        </div>
-        <RowActions />
-    </div>
-);
-
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-    const pages = Array.from({ length: totalPages }, (_, i) => i);
-    return (
-        <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-center gap-2">
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors text-xs" onClick={() => onPageChange(0)} disabled={currentPage === 0}>««</button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors" onClick={() => onPageChange(Math.max(0, currentPage - 1))} disabled={currentPage === 0}>‹</button>
-            {pages.map((page) => (
-                <button key={page} className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm transition-colors ${page === currentPage ? "bg-purple-600 text-white font-semibold shadow" : "text-gray-500 hover:bg-gray-100"}`} onClick={() => onPageChange(page)}>{page}</button>
-            ))}
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors" onClick={() => onPageChange(Math.min(totalPages - 1, currentPage + 1))} disabled={currentPage === totalPages - 1}>›</button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors text-xs" onClick={() => onPageChange(totalPages - 1)} disabled={currentPage === totalPages - 1}>»»</button>
-        </div>
-    );
-};
-
-function Sellers() {
-    const [search, setSearch] = useState("");
-    const [showEntities, setShowEntities] = useState(10);
-    const [currentPage, setCurrentPage] = useState(0);
-
-    const filteredData = useMemo(() => {
-        const q = search.toLowerCase();
-        return INITIAL_DATA.filter((d) => d.name.toLowerCase().includes(q) || d.id.toLowerCase().includes(q));
-    }, [search]);
-
-    const paginatedData = useMemo(() => {
-        const s = currentPage * showEntities;
-        return filteredData.slice(s, s + showEntities);
-    }, [filteredData, currentPage, showEntities]);
-
-    const totalPages = Math.max(1, Math.ceil(filteredData.length / showEntities));
-    const handleEntitiesChange = useCallback((v) => { setShowEntities(v); setCurrentPage(0); }, []);
-    const handleSearchChange = useCallback((v) => { setSearch(v); setCurrentPage(0); }, []);
-
-    return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            <PageHeader />
-            <FiltersBar search={search} onSearchChange={handleSearchChange} />
-            <div className="p-6">
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-purple-100 px-6 py-4 flex items-center justify-between">
-                        <h2 className="text-purple-700 font-bold text-base">Seller list</h2>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600 font-medium">Show entities</span>
-                            <EntitiesSelector value={showEntities} onChange={handleEntitiesChange} />
+            {/* Table Card */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                {/* Card Header */}
+                <div className="bg-[#A594F9] px-5 py-4 flex justify-between items-center">
+                    <h2 className="text-base font-bold text-purple-700">Seller list</h2>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">Show entities</span>
+                        <div className="relative">
+                            <select
+                                value={itemsPerPage}
+                                onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                                className="appearance-none bg-purple-600 text-white border-0 rounded-lg px-3 py-1.5 pr-8 text-sm font-semibold focus:outline-none cursor-pointer"
+                            >
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                            </select>
+                            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white pointer-events-none" />
                         </div>
                     </div>
-                    <div className={`grid ${GRID_COLS} gap-4 px-6 py-3 border-b border-gray-100 bg-gray-50`}>
-                        {TABLE_COLUMNS.map((h) => (<div key={h} className="text-xs font-bold text-gray-500 uppercase tracking-wider">{h}</div>))}
+                </div>
+
+                {/* Table */}
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr className="border-b border-gray-100">
+                                {["Business name", "Login info", "Number", "Coupons", "Status", "Created date", "Action"].map((h, i) => (
+                                    <th key={i} className={`px-4 py-3 text-sm font-bold text-gray-800 bg-white ${i < 6 ? 'border-r border-gray-100' : ''} text-left`}>
+                                        {h}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentData.map((row, index) => (
+                                <tr
+                                    key={`${row.id}-${index}`}
+                                    className="border-b border-gray-50 hover:bg-purple-50/20 transition-colors"
+                                >
+                                    {/* Business name */}
+                                    <td className="p-4 border-r border-gray-50 align-top">
+                                        <div className="space-y-1">
+                                            <InfoRow label="Sl no" value={row.id} />
+                                            <InfoRow label="Name" value={row.name} />
+                                            <InfoRow label="Address" value={row.address} />
+                                        </div>
+                                    </td>
+
+                                    {/* Login info */}
+                                    <td className="p-4 border-r border-gray-50 align-top">
+                                        <div className="space-y-1">
+                                            <InfoRow label="Username" value={row.username} />
+                                            <InfoRow label="Email" value={row.email} />
+                                            <InfoRow label="Password" value={row.password} />
+                                        </div>
+                                    </td>
+
+                                    {/* Number */}
+                                    <td className="p-4 border-r border-gray-50 align-top">
+                                        <div className="text-sm font-medium text-gray-800">{row.number}</div>
+                                    </td>
+
+                                    {/* Coupons */}
+                                    <td className="p-4 border-r border-gray-50 align-top">
+                                        <div className="space-y-1">
+                                            <div className="text-xs font-bold text-gray-800">Plus : {row.plusUsed} / {row.plusTotal}</div>
+                                            <div className="text-xs font-bold text-gray-800">Pro : {row.proUsed} / {row.proTotal}</div>
+                                            <button className="text-gray-400 text-xs flex items-center gap-1 hover:text-purple-600 transition-colors font-bold mt-1">
+                                                <Eye className="w-3 h-3" />
+                                                Show History
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    {/* Status */}
+                                    <td className="p-4 border-r border-gray-50 align-top">
+                                        <span className={`inline-block text-xs font-bold px-2.5 py-1 rounded-full ${row.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
+                                            {row.status}
+                                        </span>
+                                    </td>
+
+                                    {/* Created date */}
+                                    <td className="p-4 border-r border-gray-50 align-top">
+                                        <div className="space-y-1">
+                                            <div className="text-sm font-bold text-gray-800">{row.createdDate}</div>
+                                            <div className="text-xs text-gray-400">{row.createdTime}</div>
+                                        </div>
+                                    </td>
+
+                                    {/* Actions */}
+                                    <td className="p-4 align-top">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex gap-2">
+                                                <button className="text-xs font-bold px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
+                                                    Edit
+                                                </button>
+                                                <button className="text-xs font-bold px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors whitespace-nowrap">
+                                                    Payment Cleared
+                                                </button>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button className="text-xs font-bold px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">
+                                                    Return
+                                                </button>
+                                                <button className="text-xs font-bold px-3 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors whitespace-nowrap">
+                                                    Assign Coupon
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="px-5 py-3 flex justify-end items-center border-t border-gray-100">
+                    <div className="flex items-center gap-1">
+                        <PagBtn onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
+                            <ChevronsLeft className="w-4 h-4" />
+                        </PagBtn>
+                        <PagBtn onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                            <ChevronLeft className="w-4 h-4" />
+                        </PagBtn>
+
+                        <button className="w-8 h-8 rounded text-sm font-semibold text-gray-400 flex items-center justify-center">
+                            0
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={`w-8 h-8 rounded text-sm font-bold flex items-center justify-center transition-all ${currentPage === page
+                                    ? 'bg-purple-600 text-white shadow-sm'
+                                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                                    }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+
+                        <PagBtn onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                            <ChevronRight className="w-4 h-4" />
+                        </PagBtn>
+                        <PagBtn onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>
+                            <ChevronsRight className="w-4 h-4" />
+                        </PagBtn>
                     </div>
-                    {paginatedData.length > 0 ? paginatedData.map((row, idx) => (<TableRow key={`${row.id}-${idx}`} row={row} isLast={idx === paginatedData.length - 1} />)) : (<div className="px-6 py-12 text-center text-gray-400 text-sm">No results found.</div>)}
-                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
                 </div>
             </div>
         </div>
     );
-}
+};
+
+const InfoRow = ({ label, value, muted }) => (
+    <p className="text-xs text-left">
+        <span className="font-bold text-gray-800">{label} : </span>
+        <span className={`font-medium ${muted ? 'text-gray-400' : 'text-gray-600'}`}>{value}</span>
+    </p>
+);
+
+const PagBtn = ({ onClick, disabled, children }) => (
+    <button
+        onClick={onClick}
+        disabled={disabled}
+        className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+    >
+        {children}
+    </button>
+);
 
 export default Sellers;

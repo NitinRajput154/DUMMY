@@ -23,6 +23,10 @@ import Location from '../pages/Location/Location';
 import Financer from '../pages/Financer/Financer';
 import AppList from '../pages/Content/AppList';
 import Settings from '../pages/Settings/Settings';
+import Analytics from '../pages/Reports/Analytics';
+import Contact from '../pages/Support/Contact';
+import ChangePassword from '../pages/Account/ChangePassword';
+import Logout from '../pages/Logout';
 
 const AppRoutes = () => {
     const { isAuthenticated } = useAuth();
@@ -49,15 +53,18 @@ const AppRoutes = () => {
                 <Route path="coupons/allocation" element={<Allocation />} />
                 <Route path="operations/settings" element={<Settings />} />
                 <Route path="operations/logs" element={<ComingSoon />} />
-                <Route path="reports/analytics" element={<ComingSoon />} />
+                <Route path="reports/analytics" element={<Analytics />} />
                 <Route path="reports/export" element={<ComingSoon />} />
                 <Route path="support/tickets" element={<ComingSoon />} />
                 <Route path="support/faq" element={<ComingSoon />} />
+                <Route path="support/contact" element={<Contact />} />
                 <Route path="account/profile" element={<ComingSoon />} />
                 <Route path="account/settings" element={<ComingSoon />} />
+                <Route path="account/change-password" element={<ChangePassword />} />
                 <Route path="location" element={<Location />} />
                 <Route path="financer/list" element={<Financer />} />
                 <Route path="companylist" element={<CompanyList />} />
+                <Route path='/logout' element={<Logout />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" />} />

@@ -52,8 +52,8 @@ const Banners = () => {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
 
                 {/* Purple Header Bar */}
-                <div className="bg-purple-100 px-5 py-4 flex justify-between items-center">
-                    <h2 className="text-base font-bold text-purple-700">Add Banners</h2>
+                <div className="bg-[#A594F9] px-5 py-4 flex justify-between items-center">
+                    <h2 className="text-base font-bold text-white">Add Banners</h2>
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-600">Show entities</span>
                         <div className="relative">

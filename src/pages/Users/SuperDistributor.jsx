@@ -191,7 +191,7 @@ const SuperDistributor = () => {
                     {/* Table Card */}
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         {/* Card Header */}
-                        <div className="bg-[#A594F9] px-5 py-4 flex justify-between items-center">
+                        <div className="bg-[#A594F9]  px-5 py-4 flex justify-between items-center">
                             <h2 className="text-base font-bold text-white">Super Distributor list</h2>
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-white/80">Show entities</span>

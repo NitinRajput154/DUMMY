@@ -126,7 +126,7 @@ function CNFPage() {
             <div className="p-6">
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     {/* Table header row */}
-                    <div className="bg-purple-100 px-6 py-4 flex items-center justify-between">
+                    <div className="bg-[#A594F9] px-6 py-4 flex items-center justify-between">
                         <h2 className="text-purple-700 font-bold text-base">CNF List</h2>
                         <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-600 font-medium">Show entities</span>
@@ -187,8 +187,8 @@ function CNFPage() {
                             {/* Status */}
                             <div className="pt-0.5">
                                 <span className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full ${row.status === "Active"
-                                        ? "bg-green-100 text-green-700"
-                                        : "bg-red-100 text-red-600"
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-red-100 text-red-600"
                                     }`}>
                                     {row.status}
                                 </span>
